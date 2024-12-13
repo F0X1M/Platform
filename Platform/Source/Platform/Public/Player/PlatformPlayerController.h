@@ -33,6 +33,15 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void Jump(const FInputActionValue& InputActionValue);
+
+	UFUNCTION(BlueprintCallable)
+	void StopJump();
+
+	UFUNCTION(BlueprintCallable)
+	void Dash();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<ACharacter> PlayerCharacter;
 	
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> InputContext; 
@@ -45,6 +54,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> DashAction;
 	
 };
 

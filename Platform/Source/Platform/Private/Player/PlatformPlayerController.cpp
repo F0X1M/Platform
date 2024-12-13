@@ -4,6 +4,7 @@
 #include "Player/PlatformPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/Character.h"
 
 APlatformPlayerController::APlatformPlayerController()
 {
@@ -21,7 +22,10 @@ void APlatformPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(InputContext, 0);
 	}
 
-	bShowMouseCursor = false;
+	PlayerCharacter = GetPawn<ACharacter>();
+	PlayerCharacter->JumpMaxHoldTime = 0.25f;
+	PlayerCharacter->JumpMaxCount = 2;
+
 }
 
 void APlatformPlayerController::PlayerTick(float DeltaTime)
@@ -38,7 +42,9 @@ void APlatformPlayerController::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlatformPlayerController::Move);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlatformPlayerController::Look);
-	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlatformPlayerController::Jump);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &APlatformPlayerController::Jump);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &APlatformPlayerController::StopJump);
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &APlatformPlayerController::Dash);
 }
 
 void APlatformPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -50,10 +56,10 @@ void APlatformPlayerController::Move(const FInputActionValue& InputActionValue)
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	
-	if (APawn* ControlledPawn = GetPawn<APawn>())
+	if (PlayerCharacter)
 	{
-		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
-		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+		PlayerCharacter->AddMovementInput(ForwardDirection, InputAxisVector.Y);
+		PlayerCharacter->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 }
 
@@ -67,5 +73,21 @@ void APlatformPlayerController::Look(const FInputActionValue& InputActionValue)
 
 void APlatformPlayerController::Jump(const FInputActionValue& InputActionValue)
 {
-	UE_LOG(LogTemp, Error, TEXT("Jump"));
+	if (PlayerCharacter->CanJump())
+	{
+		PlayerCharacter->Jump();
+	}
+
+}
+
+void APlatformPlayerController::StopJump()
+{
+	PlayerCharacter->StopJumping();
+}
+
+void APlatformPlayerController::Dash()
+{
+	FVector Velocity = FVector(PlayerCharacter->GetVelocity().X, PlayerCharacter->GetVelocity().Y, 0.f) * 10.f;
+
+	PlayerCharacter->LaunchCharacter(Velocity, false, false);
 }
