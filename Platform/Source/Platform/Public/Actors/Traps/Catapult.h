@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "Catapult.generated.h"
 
+class USphereComponent;
+
 UCLASS()
 class PLATFORM_API ACatapult : public AActor
 {
@@ -20,10 +22,20 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UBoxComponent> Box;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<USphereComponent> LandingZone;
+
 protected:
 	virtual void BeginPlay() override;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
 	
+	UFUNCTION(BlueprintCallable, Category = "Trap")
+	void ActivateTrap(AActor* Actor);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trap")
+	float LaunchHeight = 0.f;
+
 };

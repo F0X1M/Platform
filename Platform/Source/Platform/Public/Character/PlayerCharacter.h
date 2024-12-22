@@ -12,18 +12,29 @@ class PLATFORM_API APlayerCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	APlayerCharacter();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vitals")
+	float Health;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vitals")
+	float MaxHealth;
 
+	UFUNCTION(BlueprintCallable, Category = "Vitals")
+	float GetHealth() {return Health;}
+
+	UFUNCTION(BlueprintCallable, Category = "Vitals")
+	float GetMaxHealth() {return MaxHealth;}
+
+	UFUNCTION(BlueprintCallable, Category = "Vitals")
+	void ChangeHealth(float NewValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Vitals")
+	void ChangeMaxHealth(float NewValue);
 };
