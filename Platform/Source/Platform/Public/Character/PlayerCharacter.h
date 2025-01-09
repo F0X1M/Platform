@@ -26,6 +26,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vitals")
 	float MaxHealth;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vitals")
+	int32 Crystals;
+
 	UFUNCTION(BlueprintCallable, Category = "Vitals")
 	float GetHealth() {return Health;}
 

@@ -2,26 +2,40 @@
 
 
 #include "Actors/Collectibles/Crystal.h"
+#include "Character/PlayerCharacter.h"
 
-// Sets default values
+
 ACrystal::ACrystal()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	RootComponent = Mesh;
+
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>("Box Component");
+	BoxComponent->SetupAttachment(Mesh);
 }
 
-// Called when the game starts or when spawned
 void ACrystal::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
 void ACrystal::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ACrystal::OnCollect(AActor* Collector)
+{
+	if (!Collector) {return;}
+
+	if (APlayerCharacter* Character = Cast<APlayerCharacter>(Collector))
+	{
+		Character->Crystals++;
+		this->Destroy();
+	}
 }
 
